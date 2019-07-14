@@ -1,0 +1,186 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Color Picker</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,800" rel="stylesheet">
+    
+    <!-- external css resources. Not using this for this assignment -->
+    <!-- <link rel="stylesheet" href="css/main.css" /> -->
+    <!-- <link rel="stylesheet" href="css/pure-min.css"/>  -->
+
+    <link rel="icon" href="images/favicon.png" />
+
+    <!-- css styling -->
+    <style>
+
+        /* changing text styling */
+        h1, h3{ 
+            text-align: center;
+            font-family: 'Raleway', sans-serif;
+            text-transform: uppercase;
+        }
+        body {
+            background:#CCCCCC;
+        }
+
+        /* CSS grid layout */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr; /*create 3 columns take up the same amount of space*/
+            grid-template-rows: auto;
+            grid-gap: 3rem;
+        }
+
+        /* grid item styling */
+        .item {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            border-radius: 20px;
+            border: 4px solid #171717;
+        }
+
+        .item .text {
+            visibility: hidden;
+            font-family: 'Raleway', sans-serif;
+            font-size: 20px;
+            margin-left: 1.66%;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 1px solid #f1f1f1;
+            padding-bottom: 8px;   
+            text-align: center;
+        }
+
+        /* item information display when hover on top of the box */
+        .item:hover .text{
+            visibility: visible;
+        }
+    </style>
+</head>
+
+<body>
+    
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script>
+        $(function () {
+
+            $('body').append('<h1>4443 - Assignment 3</h1>');
+            $('body').append('<h3>Ordered Color Grid!</h3>');
+            // https://stackoverflow.com/questions/979256/sorting-an-array-of-javascript-objects-by-property/979325#979325
+            var sort_by = function (field, reverse, primer) {
+
+                var key = primer ?
+                    function (x) { return primer(x[field]) } :
+                    function (x) { return x[field] };
+
+                reverse = !reverse ? 1 : -1;
+
+                return function (a, b) {
+                    return a = key(a), b = key(b), reverse * ((a > b) - (b > a));
+                }
+            }
+
+            // *********************************
+            // display colors using table
+
+            /**
+             * theads [array] : array of string col heads
+             * trows [json] : json array of data
+             */
+            //  function buildTable(theads, trows) {
+            //     $('body').append('<div id="t1"></div>');
+                
+                
+            //     var table = '<table class="pure-table pure-table-bordered" id="tcolor">';
+            //     for (var i = 0; i < theads.length; i++) {
+            //         table += '<th>' + theads[i] + '</th>';
+            //     }
+            //     for (var i = 0; i < trows.length; i++) {
+            //         table += '<tr>';
+            //         for (var key in trows[i]) {
+            //             if (trows[i].hasOwnProperty(key)) {
+            //                 table += '<td>' + trows[i][key] + '</td>';
+            //             }
+            //         }
+            //         // Adding new column here and grabbing color from json
+            //         table += '<td style="background:'+trows[i]['html']+'"></td>';
+            //         table += '</tr>';
+            //     }
+            //     table += '</table>';
+            //     $('#t1').append(table);
+
+            //     $( "#tcolor > tbody > tr:odd" ).css( "background-color", "#c0c0c0" );
+
+            // }
+            // *************************************
+
+
+            //display colors using CSS Grid layout
+            function buildGrid(data){
+                //create a div with class of container in the body
+                $('body').append('<div class="container"></div>');
+
+                //create another div with class of "item" inside container for each color 
+                for(var i = 0; i< data.length; i++){
+
+                    //get the color of the text inside item to change depends on the background color
+                    var textColor = getContrastYIQ(data[i]['html']);
+                    
+                    var item = '<div class="item"';
+
+                    //change the background color of each block based on the color's hex number
+                    item += 'style="background-color:'+data[i]['html']+'">'; 
+
+                        for (var key in data[i]){
+                            if(data[i].hasOwnProperty(key)){
+                                item += '<p class = "text" style = "color:' + textColor + '">' + key + ": " + data[i][key] + "<br>";
+                            }
+                        }
+                    item += '</p></div>';
+                        
+                    $('.container').append(item);
+                }
+            }
+
+            /**
+            * determine color of text depend on the background color of each item
+            * snippet code from https://stackoverflow.com/questions/11867545/change-text-color-based-on-brightness-of-the-covered-background-area
+            * Input: Some string hex value: #AA00FF
+            * Returns: string [black,white]
+            */
+            function getContrastYIQ(hexcolor){
+                hexcolor = hexcolor.replace("#", "");
+                var r = parseInt(hexcolor.substr(0,2),16);
+                var g = parseInt(hexcolor.substr(2,2),16);
+                var b = parseInt(hexcolor.substr(4,2),16);
+                var yiq = ((r*299)+(g*587)+(b*114))/1000;
+                return (yiq >= 128) ? 'black' : 'white';
+            }
+
+            $.get("http://167.99.145.209/assignment_03/colors.json")
+                .done(function (data) {
+                    data.sort(function(a,b){
+                        if(a.name < b.name){
+                            return -1;
+                        }
+                        if(b.name < a.name){
+                            return 1;
+                        }
+                        return 0;
+                    });
+                    // Added extra column header ("example") for our colored column
+                    // buildTable(['html', 'name', 'rgb', 'example'], data);
+                    
+                    //build grid layout for colors display, pase in data from colors.json
+                    buildGrid(data);
+                });
+        });
+    </script>
+</body>
