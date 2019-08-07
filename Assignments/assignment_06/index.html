@@ -1,0 +1,111 @@
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="x-ua-compatible" content="ie=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <title>Students</title>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css?family=Raleway:400,800" rel="stylesheet">
+    
+    <!-- external css resources. Not using this for this assignment -->
+    <!-- <link rel="stylesheet" href="css/main.css" /> -->
+    <!-- <link rel="stylesheet" href="css/pure-min.css"/>  -->
+
+    <link rel="icon" href="images/favicon.png" />
+
+    <!-- css styling -->
+    <style>
+
+        /* changing text styling */
+        h1, h3{ 
+            text-align: center;
+            font-family: 'Raleway', sans-serif;
+            text-transform: uppercase;
+        }
+        body {
+            background:#CCCCCC;
+        }
+
+        /* CSS grid layout */
+        .container {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr; /*create 3 columns take up the same amount of space*/
+            grid-template-rows: auto;
+            grid-gap: 3rem;
+        }
+
+        /* grid item styling */
+        .item {
+            box-shadow: 0 10px 20px rgba(0,0,0,0.19), 0 6px 6px rgba(0,0,0,0.23);
+            border-radius: 20px;
+            border: 4px solid #171717;
+            background-color: #171717;
+        }
+
+        .item img {
+            display: block;
+            margin-left: auto;
+            margin-right: auto;
+            width: 100%;
+            border-radius: 20px;
+        }
+
+        .item .text {
+            font-family: 'Raleway', sans-serif;
+            font-size: 15px;
+            margin-left: 1.66%;
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 1px solid #f1f1f1;
+            padding-bottom: 8px;   
+            text-align: center;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+
+    <script src="js/jquery-3.4.1.min.js"></script>
+    <script>
+        $(function () {
+
+            $('body').append('<h1>4443 - Assignment 6</h1>');
+            $('body').append('<h3>Student Grid Images!</h3>');
+ 
+
+            //display students using CSS Grid layout
+            function buildGrid(students){
+                //create a div with class of container in the body
+                $('body').append('<div class="container"></div>');
+
+                //create another div with class of "item" inside container for each student
+                for(var i = 0; i< students["data"].length; i++){
+                    var item = '<div class="item">';
+
+                    //build URL to display student's image
+                    item += '<img src ="http://mayptrinh.com/assignment_06/card_services_data' + students["data"][i]["photo"] + '">'; 
+                    
+                    // display student's info in <p> tag
+                    item += '<p class = "text">' + "First: " + students["data"][i]["first_name"] + "<br>";
+                    item += "Last: " + students["data"][i]["last_name"] + "<br>"; 
+                    item += "ID: " + students["data"][i]["mustang_id"] + '</p></div>';
+                
+                    $('.container').append(item);
+                }
+            }
+
+            $.get("http://mayptrinh.com/assignment_06/api.php?route=student")
+                .done(function (data) {
+                    console.log(data);
+                    //build grid layout for students display, pase in data from colors.json
+                    buildGrid(data);
+                });
+        });
+    </script>
+</body>
