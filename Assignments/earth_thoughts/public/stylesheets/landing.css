@@ -1,0 +1,94 @@
+body {
+    background-color: white;
+}
+.navbar {
+    z-index: 9999;    
+}
+#landing-caption {
+    z-index: 1;/* put the header closer to the viewer, in front of anything with z-index < 1 */
+    position: relative; 
+    text-align: center;
+    padding-top: 40vh;
+    padding-left: 10vh;
+    padding-right: 10vh;
+}
+#landing-caption h1 {
+    color: #fff;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 1);
+    font-family: 'EB Garamond', serif;
+}
+
+.slideshow { 
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    z-index: 0; /*put slideshow behind the header */
+    list-style: none;
+    margin: 0;
+    padding: 0;
+}
+
+.slideshow li { 
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background-size: cover;
+    background-position: 50% 50%;
+    background-repeat: no-repeat;
+    opacity: 0;
+    z-index: 0;
+    animation: imageAnimation 50s linear infinite; 
+}
+.slideshow li:nth-child(1) { 
+    background-image: url(https://preview.redd.it/n5yrmi46g3e31.jpg?width=960&crop=smart&auto=webp&s=62a322b086d64b7b51a4d0417dacc6e422a3171e) 
+}
+.slideshow li:nth-child(2) { 
+    background-image: url(https://preview.redd.it/ebvgluh0gwd31.jpg?width=960&crop=smart&auto=webp&s=e587811fa8341b05e1558347ae439b79cd04c538);
+    animation-delay: 10s; 
+}
+.slideshow li:nth-child(3) { 
+    background-image: url(https://preview.redd.it/hy1t0vfro3e31.jpg?width=960&crop=smart&auto=webp&s=f47f89c3f7e55725011819211dc4712c6f13de65);
+    animation-delay: 20s; 
+}
+.slideshow li:nth-child(4) { 
+    background-image: url(https://preview.redd.it/b65t5hcii4e31.jpg?width=960&crop=smart&auto=webp&s=9d21e4d1d90b99a0bced4da9cb7e4d8dfd78ef7b);
+    animation-delay: 30s; 
+}
+.slideshow li:nth-child(5) { 
+    background-image: url(https://preview.redd.it/e05f0htmn6e31.jpg?width=960&crop=smart&auto=webp&s=647687915188cb499fa2c0b5870394af7af3cf05);
+    animation-delay: 40s;  
+}
+
+@keyframes imageAnimation { 
+    0% { 
+      opacity: 0; 
+      animation-timing-function: ease-in;
+    }
+    10% {
+      opacity: 1;
+      animation-timing-function: ease-out;
+    }
+    20% {
+      opacity: 1
+    }
+    30% {
+      opacity: 0
+    }
+}
+
+/* Older browser support - .no-cssanimations class added by modernizr */
+.no-cssanimations .slideshow li {
+	opacity: 1;
+}
+.all{
+    /* color: white;
+    font-size: 50px; */
+    z-index: 9999;   
+}
+.all a{
+    font-size: 100px;
+}

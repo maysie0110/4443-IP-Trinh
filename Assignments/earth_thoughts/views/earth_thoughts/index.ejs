@@ -1,0 +1,64 @@
+<% include ../partials/header %> 
+
+        <div class="container">
+            <header class="jumbotron">
+                <div class="container">
+                    <h1><i class="far fa-images fa-lg"></i> Welcome To Earth Thoughts!</h1>
+                    <p>Viewing and sharing those miniature epiphanies you have that highlight the oddities within the familiar on top of the stunning images of our magnificient planet!</p>
+                    <div id="slideshow">
+                        <% earth_thoughts.forEach(function(earth_thought){ %>
+                            <div>
+                                <img src="<%= earth_thought.url %>" style="width:100%">
+                                <div class="caption">
+                                    <h2><%= earth_thought.thoughts %></h2>
+                                </div>
+                            </div>
+                            
+                        <% }); %>
+                    </div>
+                    <p class="button">
+                        <a class="btn btn-primary btn-large" href="/earth_thoughts/new">Add New Earth Thoughts</a>
+                    </p>
+                    <p class="button">
+                        <a class="btn btn-danger btn-large" href="/earth_thoughts/favorites">Favorites</a>
+                    </p>
+                </div>
+            </header>
+
+            <div class="row text-center" style="display:flex; flex-wrap: wrap;">
+                <% earth_thoughts.forEach(function(earth_thought){ %>
+                    <div class="col-md-4 col-sm-6" id="item">
+                        <div class="thumbnail" id="thumbnail">
+                            <img src="<%= earth_thought.url %>">
+                            <div class="caption">
+                                <h4><%= earth_thought.thoughts %></h4>
+                            </div>
+                            <p class="button">
+                                <a href="/earth_thoughts/<%= earth_thought.id %>" class="btn btn-primary"><i class="fas fa-search-plus fa-lg"></i></a>
+                            </p>
+                            <p class="button">
+                                <a href="/earth_thoughts/favorites/<%= earth_thought.id %>" class="btn btn-danger"><i class="far fa-heart fa-lg"></i></a>
+                            </p>
+                        </div>
+                    </div>
+                <% }); %>
+            </div>
+        </div>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+        <script>
+
+
+            $("#slideshow > div:gt(0)").hide();
+
+            setInterval(function() { 
+            $('#slideshow > div:first')
+                .fadeOut(2000)
+                .next()
+                .fadeIn(2000)
+                .end()
+                .appendTo('#slideshow');
+            },  3000);
+        </script>
+    </body>
+</html>
