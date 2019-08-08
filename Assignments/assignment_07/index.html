@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Candy store</title>
+
+    <!-- google font -->
+    <link href='https://fonts.googleapis.com/css?family=Montserrat|Cardo' rel='stylesheet' type='text/css'>
+    <!-- Bootstrap 4 css -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" crossorigin="anonymous">
+
+    <!-- custom css -->
+   <link rel="stylesheet" href="/candy_store/assets/css/main.css" type="text/css">
+</head>
+<body>
+   <!-- navigation bar for menu items -->
+    <nav class="navbar navbar-light bg-light navbar-expand-lg navbar-fixed-top ">
+        <a class="navbar-brand" href="">CANDY STORE</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+            <li class="nav-item active">
+                <a class="nav-link" href="">Home <span class="sr-only">(current)</span></a>
+            </li>
+
+            <li class="nav-item dropdown">
+                <button class="btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                    Category <span class="caret"></span>
+                </button>
+
+                <!-- <a aria-expanded="false" aria-haspopup="true" role="button" data-toggle="dropdown" class="dropdown-toggle" href="#">
+                    <span id="selected">Chose option</span><span class="caret"></span></a> -->
+                <div class="dropdown-menu scrollable-menu" role="menu" aria-labelledby="dropdownMenu1"></div>
+            </li>
+            </ul>
+
+            <!-- search form with size selection -->
+            <form class="form-inline">
+                <label class="my-1 mr-2" for="inlineFormCustomSelectPref">Result size:</label>
+                <select class="custom-select my-1 mr-sm-2" id="inlineFormCustomSelectPref">
+                    <option selected>10</option>
+                    <option value="15">15</option>
+                    <option value="20">20</option>
+                    <option value="25">25</option>
+                </select>
+            </form>
+            <form class="form-inline my-2 my-lg-0">
+                <input class="form-control mr-sm-2" id="mySearch" type="search" placeholder="Search" aria-label="Search">
+                <button class="btn btn-outline-success mx-2 my-2 my-sm-0" id="search" type="submit">Search</button>
+
+                <div class="custom-control custom-checkbox my-1 mr-sm-2">
+                    <input type="checkbox" class="custom-control-input" id="customControlInline">
+                    <label class="custom-control-label" for="customControlInline">Remember my preference</label>
+                </div>      
+            </form>
+        </div>
+    </nav>
+
+    <!-- build grid to display candy item from database -->
+    <div class="container py-5" id="candy-grid"></div>
+
+    <!-- next button -->
+    <div class="container">
+        <button class="float-right mb-5" id="next" data-start="0" data-chunk="10">Next &raquo;</button>
+    </div>
+
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="/candy_store/assets/js/jquery-3.4.1.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+
+    <script>
+        $(function () {
+
+            //display students using CSS Grid layout
+            function buildGrid(candy){
+                $('#candy-grid').append('');
+                //create a div with class of container in the body
+                // $('body').append('<div class="container py-5"></div>');
+
+                //create another div with class of "item" inside container for each candy
+                for(var i = 0; i< candy["data"].length; i++){
+                    var item = '<div class="card">';
+
+                    //build URL to display candy's image
+                    item += '<img class="card-img-top" alt = "Card image cap" src ="http://mayptrinh.com/candy_store/images/' + candy["data"][i]["local_image"] + '">'; 
+                    
+                    item += '<div class="card-body">';
+                    // display student's info in <p> tag
+                    item += '<h5 class="card-title">' + candy["data"][i]["title"] + '</h5>';
+
+                    item += '<p class = "card-text">' + getWords(candy["data"][i]["description"]) + " ...<br>";
+                    item += "<span>Price: " + candy["data"][i]["price"] + "</span><br>"; 
+                    item += "<span>Amount: " + candy["data"][i]["amount"] + ' ' + candy['data'][i]["units"]+ '</span></p>';
+                    item += '<a href="#" class="btn btn-primary">More Info</a>';
+                    
+                    item +='</div>';
+                    $('#candy-grid').append(item);
+                }
+            }
+
+            //https://stackoverflow.com/questions/13146613/jquery-return-first-5-words-of-a-string-without-commas
+            //return part of a string in Javascript
+            function getWords(str) {
+                return str.split(/\s+/).slice(0,15).join(" ");
+            }
+
+
+            //Use the getCategories route to obtain data that will populate a dropdown list with all the categories.
+            function buildCategory(categories){
+                for(var i = 0; i< categories["data"].length; i++){
+                    var cat = '<li> <a class="dropdown-item" href="#" data-value="'+ categories["data"][i] + '">' + categories["data"][i] + '</a> </li>';
+                    $('.dropdown-menu').append(cat);
+                }      
+            }
+            
+            // display category item selected
+            $(".dropdown-menu").on('click', 'li a', function(){
+                $(".btn:first-child").text($(this).text());
+                $(".btn:first-child").val($(this).text());
+            });
+
+
+            // search button click event
+            $( "#search" ).click(function( event ) {
+
+                $("#candy-grid").empty();
+                $("#next").data("start",0);
+                event.preventDefault();
+
+                var x = $("#mySearch").val();
+               
+                //searching using categories
+                if(x == ""){
+                    var keyword = $(".btn:first-child").val();
+                    var key = keyword.replace(/ /g,'-');
+                    key = key.toLowerCase();
+                  
+                    // event.preventDefault();
+                    $.get("http://mayptrinh.com/candy_store/api?route=candy&column=category&keyword="+key + "&start=0" + "&chunk=" + $("#inlineFormCustomSelectPref").val())
+                        .done(function (data) {
+                            // console.log(data);
+                            buildGrid(data);
+                    });
+                }
+
+                // searching using keyword
+                else{
+                    x = "%" + x +"%";
+                    // console.log(x);
+                    $.get("http://mayptrinh.com/candy_store/api?route=candy&column=title&keyword="+x + "&start=0" + "&chunk=" + $("#inlineFormCustomSelectPref").val())
+                        .done(function (data) {
+                            console.log(data);
+                            buildGrid(data);
+                    });
+                }
+            });
+            
+            // next button click event
+            $("#next").on("click",function(event) {
+                
+                $("#candy-grid").empty();
+
+                var start = $(this).data("start");
+                var chunk = Number(document.getElementById("inlineFormCustomSelectPref").value);
+                $(this).data("start", start+chunk);
+                $(this).data("chunk",chunk);
+
+                var s = $("#mySearch").val();
+                var c = $(".btn:first-child").val();
+                // next button for searching with categories
+                if(s == "" && c != ""){
+                    var keyword = $(".btn:first-child").val();
+                    var key = keyword.replace(/ /g,'-');
+                    key = key.toLowerCase();
+                    
+                    var url = "http://mayptrinh.com/candy_store/api?route=candy&column=category&keyword="+key;
+                    getData(url,$(this).data("start"),$(this).data("chunk"));
+                }
+
+                //next for searching with keyword
+                else if (s != "" && c == ""){
+                    s = "%" + s +"%";
+                    var url = "http://mayptrinh.com/candy_store/api?route=candy&column=title&keyword="+s;
+                    getData(url,$(this).data("start"),$(this).data("chunk"));
+                }
+
+                //default page
+                else if(s == "" &&  c == ""){
+                    var url = "http://mayptrinh.com/candy_store/api?route=candy";
+                    getData(url,$(this).data("start"),$(this).data("chunk"));
+                }
+            });
+
+
+            function getData(url,start,chunk){
+                
+                let geturl = url+'&start='+start+'&chunk='+chunk
+                $.get(geturl)
+                    .done(function (data) {
+                        buildGrid(data);
+                        // console.log(data);
+                    });
+                console.log(geturl);
+            }
+
+            // getting the default page filled with the candy from database
+            $.get("http://mayptrinh.com/candy_store/api?route=candy&start=0&chunk="+$("#inlineFormCustomSelectPref").val())
+                .done(function (data) {
+                    // console.log(data);
+                    buildGrid(data);
+            });
+
+            // getting all categories from database for menu list
+            $.get("http://mayptrinh.com/candy_store/api?route=categories")
+                .done(function (data) {
+                    // console.log(data);
+                    buildCategory(data);
+            });
+        });
+        
+    </script>
+</body>
+</html>
